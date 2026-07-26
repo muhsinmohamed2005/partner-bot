@@ -25,3 +25,4 @@ dist-ssr
 amplify_outputs.json
 amplify_outputs.json
 .amplify/
+.env

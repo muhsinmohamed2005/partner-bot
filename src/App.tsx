@@ -25,62 +25,48 @@ function App() {
   const [period, setPeriod] = useState('');
   const [question, setQuestion] = useState('');
 
-  // ERROR — goes right after your existing useState lines, still inside App(),
-  // still before the `return`.
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [answer, setAnswer] = useState('');
 
-  // ERROR — the handler function. Also inside App(), after all useState lines,
-  // still before `return`. Order among these doesn't matter (state vs function),
-  // just needs to be inside App() and before return.
-  async function handleSubmit() {
-    setLoading(true);
-    setError('');
-    setAnswer('');
+  async function handleSubmit() {  // "async" lets this function use "await" to pause on slow operations
+    setLoading(true);              // flips loading state to true, triggers re-render showing the spinner
+    setError('');                  // clears any leftover error message from a previous attempt
+    setAnswer('');                 // clears any leftover answer from a previous attempt
 
     const requestBody = {
-      question,
-      ticker: COMPANIES[company],
-      year: Number(year),
-      period,
+      question,                          // shorthand for question: question — current question state
+      ticker: COMPANIES[company],        // looks up selected name in COMPANIES to get its ticker (e.g. "Apple" -> "AAPL")
+      year: Number(year),                // converts year from a string (what <select> gives you) into a number
+      period,                            // shorthand for period: period — the selected Q1/Q2/Q3/Q4/FY value
     };
 
-    console.log('Request body:', requestBody);
+    console.log('Request body:', requestBody);  // prints the built request to console, useful for debugging
 
-    try {
-      // "Attempt this code. If anything inside throws an error, don't crash —
-      // jump straight to the catch block instead." Same as Python's try/except.
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // new Promise(...) creates a "this will finish later" placeholder.
-      // setTimeout(resolve, 1000) tells the browser: "after 1000ms, call resolve()"
-      // — resolve is what marks the Promise as "done."
-      // `await` pauses this function (only this function, not the whole page)
-      // until that Promise resolves — i.e., pause for 1 real second.
-      // This whole line exists ONLY to fake a network delay for the stub;
-      // once we call the real Lambda next module, this line gets deleted
-      // and replaced with an actual `await fetch(...)` call.
-      setAnswer(`Stub response for ${requestBody.ticker} ${requestBody.period} ${requestBody.year}: [placeholder answer]`);
-      // Runs only if the line above succeeded (didn't throw).
-      // Backticks `...` = a "template literal" — JS's version of an f-string.
-      // ${requestBody.ticker} etc. get substituted with their actual values,
-      // e.g. "Stub response for AAPL Q2 2024: [placeholder answer]"
-      // setAnswer(...) stores that string in state, which re-renders the
-      // component so the answer <View> now shows this text.
+    try {  // attempt the risky network call; jump to catch below if anything throws
+      console.log('API URL:', import.meta.env.VITE_INFERENCE_API);
+      const response = await fetch(import.meta.env.VITE_INFERENCE_API, {  // sends the real POST to API Gateway
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      });
 
-    } catch (err) {
-      // Only runs if something inside `try` threw an error.
-      // `err` holds whatever the error was (unused here, but Amplify/JS
-      // convention is to capture it in case you want to log/inspect it).
-      setError('Something went wrong. Please try again.');
-      // Stores a user-facing error message, which makes the
-      // {error && <View color="red">{error}</View>} line render.
+      const data = await response.json();  // parses the response body (raw text) into a usable JS object
+
+      if (!response.ok) {                              // response.ok is false for any non-2xx status; !response.ok = !false = true
+        throw new Error(data.error || 'Request failed'); // manually triggers catch, using Lambda's own error message
+      }
+
+      setAnswer(data.answer);  // stores the real Claude-generated answer into state, renders it on screen
+
+    } catch (err) {  // runs if fetch failed outright, or if we manually threw an error above
+
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      // stores a user-facing error message — real error text if available, otherwise a generic fallback
+
     } finally {
-      // Runs no matter what — whether try succeeded or catch fired.
-      // Used here to guarantee the loading spinner always turns off,
-      // even if something failed. Without `finally`, a thrown error could
-      // leave `loading` stuck as `true` forever, freezing the button.
-      setLoading(false);
+      setLoading(false);  // always runs regardless of outcome — turns off the loading spinner
     }
   }
 
