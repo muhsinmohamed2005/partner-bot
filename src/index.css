@@ -109,3 +109,20 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+body {
+  background-color: #faf7f0;
+}
+
+label.amplify-label {
+  font-weight: 700 !important;
+  color: #1c2e4a !important;
+  text-transform: uppercase !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.03em !important;
+}
+
+.amplify-select, 
+.amplify-input {
+  color: #6b7280;
+}
