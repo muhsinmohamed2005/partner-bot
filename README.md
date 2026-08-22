@@ -16,4 +16,4 @@ A user picks a company, fiscal year, and period, and asks a question. The app au
 npm run dev
 npx ampx sandbox
 ```
-*Part of a 3-repo system. See the [Partner Bot overview](#) for the full architecture, live demo video, and links to the other two repos ([sec-llm-service](https://github.com/muhsinmohamed2005/sec-llm-service), [partner-bot](https://github.com/muhsinmohamed2005/partner-bot)).*
+*Part of a 3-repo system. See the [Partner Bot overview](#) for the full architecture, live demo video, and links to the other two repos ([sec-llm-service](https://github.com/muhsinmohamed2005/sec-llm-service), [cdk-10q-inference](https://github.com/muhsinmohamed2005/cdk-10q-inference)).*
