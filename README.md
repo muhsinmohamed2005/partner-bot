@@ -1,32 +1,18 @@
-# React + TypeScript + Vite
+# Partner Bot
+The React frontend for **Partner Bot**: an AI chatbot that answers natural-language questions about public companies' SEC filings, retrieving the exact filing from SEC EDGAR and grounded in the actual filing text rather than general-knowledge guesses.
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+This repo handles the UI, authentication, and request/response flow. It calls a separate backend pipeline (filing retrieval + Bedrock inference) to generate answers.
 
-Currently, two official plugins are available:
+# What The Website Does:
+A user picks a company, fiscal year, and period, and asks a question. The app authenticates the user, sends the request to the backend, and displays the synthesized answer once it returns.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# Stack
+- React + TypeScript + Vite
+- AWS Amplify Gen 2 (Authenticator UI, Theming)
+- AWS Cognito (\`fetchAuthSession\`)
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Deployment
+```bash
+npm run dev
+npx ampx sandbox
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
